@@ -20,5 +20,5 @@ Install SUMO.Then double click on the file `osm.sumocfg`. Click `Play`.
 ## Run with Max-min Fairness
 ```bash
 cd Max_min_Fairness
-./max_min_fairness.py
+.\max_min_fairness.py
 ```

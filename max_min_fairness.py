@@ -28,14 +28,11 @@ sumoCmd = ["sumo", "-c", "osm.sumocfg"]
 traci.start(sumoCmd)
 
 packVehicleData = []
-
 packTLSData = []
 packBigData = []
 
 while traci.simulation.getMinExpectedNumber() > 0:
-       
         traci.simulationStep();
-
         vehicles=traci.vehicle.getIDList();
         trafficlights=traci.trafficlight.getIDList();
 
@@ -58,7 +55,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
                 #Packing of all the data for export to CSV/XLSX
                 vehList = [getdatetime(), vehid, coord, gpscoord, spd, edge, lane, displacement, turnAngle, nextTLS]
-                
                 
                 print("Vehicle: ", vehicles[i], " at datetime: ", getdatetime())
                 print(vehicles[i], " >>> Position: ", coord, " | GPS Position: ", gpscoord, " |", \
@@ -125,6 +121,19 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
                 ##----------MACHINE LEARNING CODES/FUNCTIONS HERE----------##
 
+                # Tính toán thời gian chờ tối ưu cho các xe và điều chỉnh tốc độ của chúng
+        for i in range(len(vehicles)):
+                if vehicles[i] != 'veh2':
+                        # Lấy thông tin về xe hiện tại
+                        vehid = vehicles[i]
+                        current_speed = traci.vehicle.getSpeed(vehid)
+
+                        # Tính toán tốc độ tối ưu dựa trên thời gian chờ
+                        optimal_speed = calculate_optimal_speed(vehid)
+
+                        # Điều chỉnh tốc độ của xe
+                        traci.vehicle.setSpeedMode(vehid, 0)
+                        traci.vehicle.setSpeed(vehid, optimal_speed)
 
                 ##---------------------------------------------------------------##
 
