@@ -71,7 +71,6 @@ while traci.simulation.getMinExpectedNumber() > 0:
                 )
         
         speeds.append(spd)
-        print(speeds)
 
         idd = traci.vehicle.getLaneID(vehicles[i])
         tlsList = []
