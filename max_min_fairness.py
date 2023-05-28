@@ -6,7 +6,6 @@ import datetime
 from random import randrange
 import pandas as pd
 
-
 def getdatetime():
         utc_now = pytz.utc.localize(datetime.datetime.utcnow())
         currentDT = utc_now.astimezone(pytz.timezone("Asia/Singapore"))
@@ -119,28 +118,9 @@ while traci.simulation.getMinExpectedNumber() > 0:
                 packBigData.append(packBigDataLine)
 
 
-                ##----------MACHINE LEARNING CODES/FUNCTIONS HERE----------##
+                ##----------Controls Vehicles and Traffic Lights----------##
 
-                # Tính toán thời gian chờ tối ưu cho các xe và điều chỉnh tốc độ của chúng
-        for i in range(len(vehicles)):
-                if vehicles[i] != 'veh2':
-                        # Lấy thông tin về xe hiện tại
-                        vehid = vehicles[i]
-                        current_speed = traci.vehicle.getSpeed(vehid)
-
-                        # Tính toán tốc độ tối ưu dựa trên thời gian chờ
-                        optimal_speed = calculate_optimal_speed(vehid)
-
-                        # Điều chỉnh tốc độ của xe
-                        traci.vehicle.setSpeedMode(vehid, 0)
-                        traci.vehicle.setSpeed(vehid, optimal_speed)
-
-                ##---------------------------------------------------------------##
-
-
-                ##----------CONTROL Vehicles and Traffic Lights----------##
-
-                #***SET FUNCTION FOR VEHICLES***
+                ## *SET FUNCTION FOR VEHICLES*
                 #REF: https://sumo.dlr.de/docs/TraCI/Change_Vehicle_State.html
                 NEWSPEED = 15 # value in m/s (15 m/s = 54 km/hr)
                 if vehicles[i]=='veh2':
@@ -148,19 +128,17 @@ while traci.simulation.getMinExpectedNumber() > 0:
                         traci.vehicle.setSpeed('veh2',NEWSPEED)
 
 
-                #***SET FUNCTION FOR TRAFFIC LIGHTS***
+                ## *SET FUNCTION FOR TRAFFIC LIGHTS*
                 #REF: https://sumo.dlr.de/docs/TraCI/Change_Traffic_Lights_State.html
                 trafficlightduration = [5,37,5,35,6,3]
                 trafficsignal = ["rrrrrrGGGGgGGGrr", "yyyyyyyyrrrrrrrr", "rrrrrGGGGGGrrrrr", "rrrrryyyyyyrrrrr", "GrrrrrrrrrrGGGGg", "yrrrrrrrrrryyyyy"]
                 tfl = "cluster_4260917315_5146794610_5146796923_5146796930_5704674780_5704674783_5704674784_5704674787_6589790747_8370171128_8370171143_8427766841_8427766842_8427766845"
                 traci.trafficlight.setPhaseDuration(tfl, trafficlightduration[randrange(6)])
                 traci.trafficlight.setRedYellowGreenState(tfl, trafficsignal[randrange(6)])
-
                 ##------------------------------------------------------##
 
 
 traci.close()
-
 #Generate Excel file
 columnnames = ['dateandtime', 'vehid', 'coord', 'gpscoord', 'spd', 'edge', 'lane', 'displacement', 'turnAngle', 'nextTLS', \
                        'tflight', 'tl_state', 'tl_phase_duration', 'tl_lanes_controlled', 'tl_program', 'tl_next_switch']
