@@ -27,7 +27,7 @@ while traci.simulation.getMinExpectedNumber() > 0:
 
     for vehicle_id in vehicles:
         # Vận tốc xe
-        speed = round(traci.vehicle.getSpeed(vehicle_id) * 3.6, 2)
+        speed = round(traci.vehicle.getSpeed(vehicle_id), 2)
         speeds.append(speed)
         waitingTime = traci.vehicle.getWaitingTime(vehicle_id)
         waitingTimes.append(waitingTime)
