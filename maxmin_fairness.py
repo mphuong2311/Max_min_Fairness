@@ -1,11 +1,11 @@
 import traci
 import pandas as pd
+import numpy as np
 
 def max_min_fairness(speeds):
     if not speeds:
         return 0  # Hoặc giá trị mặc định khác tuỳ thuộc vào yêu cầu
-
-    avg_speed = sum(speeds) / len(speeds)
+    avg_speed = np.mean(speeds)
     fair_speed = avg_speed * len(speeds)
     return fair_speed
 
@@ -21,6 +21,11 @@ num_bus = 0  # Biến đếm số lượng xe Bus
 while traci.simulation.getMinExpectedNumber() > 0:
     traci.simulationStep()
     vehicles = traci.vehicle.getIDList()
+
+    if not vehicles:
+        print("Không có xe Bus trong mô phỏng.")
+        break
+
     speeds = []
     waitingTimes = []
     vehicle_speeds = {}
@@ -45,27 +50,18 @@ while traci.simulation.getMinExpectedNumber() > 0:
             traci.vehicle.setSpeed(vehicle_id, fair_speed)
 
     if speeds:
-        average_speed = sum(speeds) / len(speeds)
-        average_speeds.append(average_speed)
+        average_speeds.append(np.mean(speeds))
     
     if waitingTimes:
-        average_waitingTime = sum(waitingTimes) / len(waitingTimes)
-        average_waitingTimes.append(average_waitingTime)
+        average_waitingTimes.append(np.mean(waitingTimes))
 
 traci.close()
 
 if num_bus > 0:
     avg_num_station = num_station / num_bus
     print(f"Số bến trung bình mà tất cả xe Bus đi qua: {avg_num_station}")
-else:
-    print("Không có xe Bus trong mô phỏng.")
 
-# Tạo DataFrame từ danh sách tốc độ trung bình
-df = pd.DataFrame(average_speeds, columns=['AverageSpeed'])
+# Tạo DataFrame từ danh sách tốc độ trung bình và thời gian chờ trung bình
+df = pd.DataFrame({'AverageSpeed': average_speeds, 'AverageWaitingTime': average_waitingTimes})
 # Ghi DataFrame vào file Excel
-df.to_excel('maxmin-avgSpeed.xlsx', index=False)
-
-# Tạo DataFrame từ danh sách thời gian chờ trung bình
-df = pd.DataFrame(average_waitingTimes, columns=['AverageWaitingTime'])
-# Ghi DataFrame vào file Excel
-df.to_excel('maxmin-avgTripWaitingTime.xlsx', index=False)
+df.to_excel('maxmin-summary.xlsx', index=False)
